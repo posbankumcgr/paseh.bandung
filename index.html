@@ -11,13 +11,38 @@
     --secondary:#065f46;
     --accent:#f59e0b;
     --dark:#1f2937;
+    --page-background:#f9fafb;
+    --header-start:rgba(7, 89, 82, 0.97);
+    --header-end:rgba(5, 67, 56, 0.96);
+    --hero-start:rgba(15,118,110,.85);
+    --hero-end:rgba(6,95,70,.85);
   }
   html { scroll-behavior: smooth; }
-  body { background:#f9fafb; color:#1f2937; line-height:1.6; }
+  body {
+    position:relative; isolation:isolate;
+    background:var(--page-background); color:var(--dark); line-height:1.6;
+  }
+  body::before {
+    content:""; position:fixed; inset:-3%; z-index:-1; pointer-events:none;
+    background-image:var(--page-background-image, none); background-position:center;
+    background-size:cover; background-repeat:no-repeat; opacity:var(--page-background-opacity, 0);
+    animation:var(--page-background-animation, none); will-change:transform;
+  }
+  @keyframes pageBackgroundZoom {
+    from { transform:scale(1); }
+    to { transform:scale(1.12); }
+  }
+  @keyframes pageBackgroundDrift {
+    from { transform:scale(1.05) translateX(-1%); }
+    to { transform:scale(1.05) translateX(1%); }
+  }
+  @media(prefers-reduced-motion:reduce) {
+    body::before { animation:none !important; }
+  }
 
   /* HEADER */
   header {
-    background: linear-gradient(135deg, rgba(7, 89, 82, 0.97), rgba(5, 67, 56, 0.96));
+    background: linear-gradient(135deg, var(--header-start), var(--header-end));
     color: white;
     padding: 18px 40px;
     display: flex;
@@ -31,11 +56,20 @@
     backdrop-filter: blur(8px);
   }
   .logo { display:flex; align-items:center; gap:14px; }
+  .logo-image-wrap { position:relative; flex-shrink:0; }
   .logo-img {
     width:58px; height:58px; border-radius:50%;
     object-fit:cover; border:2px solid #ffffff; background:white;
     flex-shrink:0; box-shadow: 0 8px 18px rgba(0,0,0,0.18);
   }
+  .logo-edit-button {
+    display:none; position:absolute; right:-5px; bottom:-4px; width:30px; height:30px;
+    align-items:center; justify-content:center; border:2px solid white; border-radius:50%;
+    background:#f59e0b; color:#1f2937; cursor:pointer; font-size:15px;
+    box-shadow:0 2px 8px rgba(0,0,0,.28);
+  }
+  .admin-mode .logo-edit-button { display:inline-flex; }
+  .logo-edit-button:hover { background:#fbbf24; transform:scale(1.08); }
 
   .logo h1 {
     font-size: 24px;
@@ -91,10 +125,19 @@
 
   /* HERO */
   .hero {
-    background: linear-gradient(rgba(15,118,110,.85), rgba(6,95,70,.85)),
-      url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1600') center/cover;
+    background: linear-gradient(var(--hero-start), var(--hero-end));
+    position: relative;
     color:white; padding:70px 20px; text-align:center;
   }
+  .hero-background {
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;
+  }
+  .hero::before {
+    content:""; position:absolute; inset:0;
+    background:linear-gradient(var(--hero-start), var(--hero-end));
+    z-index:1; pointer-events:none;
+  }
+  .hero-inner { position:relative; z-index:2; }
   .hero h2 {
     font-size: 38px; font-weight: 900; margin-bottom: 15px;
     background: linear-gradient(110deg, #000000 0%, #777777 25%, #ffffff 50%, #777777 75%, #000000 100%);
@@ -332,6 +375,22 @@
     width: 100%; padding: 10px; margin-bottom: 10px;
     border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px;
   }
+  .admin-help { color:#4b5563; font-size:13px; margin:0 0 12px; }
+  .admin-preview { width:88px; height:88px; object-fit:cover; border:1px solid #d1d5db; border-radius:8px; margin:4px 0 12px; background:#f3f4f6; }
+  .admin-file-label { font-size:13px; color:#555; display:block; margin-bottom:4px; }
+  .form-admin-box input[type="color"] { width:44px; height:36px; padding:2px; margin:4px 6px; vertical-align:middle; }
+  .form-admin-box input[type="range"] { width:100%; }
+  .archive-list { display:grid; gap:10px; margin-top:16px; }
+  .archive-item {
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:12px; border:1px solid #e5e7eb; border-radius:8px; background:#fff;
+  }
+  .archive-item-info { min-width:0; }
+  .archive-item-info strong { display:block; overflow-wrap:anywhere; }
+  .archive-item-info small { color:#6b7280; }
+  .archive-item-actions { display:flex; flex-wrap:wrap; gap:6px; flex-shrink:0; }
+  .archive-item-actions .archive-delete { background:#ef4444; }
+  .archive-empty { color:#6b7280; font-size:14px; padding:10px 0; }
   .form-admin-box button {
     background: var(--primary); color: white; border: none;
     padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;
@@ -539,14 +598,19 @@
     gap: 16px;
   }
   .text-copyright-dongker {
-    font-size: 15px;
-    font-weight: 700;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .035em;
     display: inline-block;
-    background: linear-gradient(110deg, #dbeafe 0%, #bfdbfe 18%, #ffffff 50%, #bfdbfe 82%, #dbeafe 100%);
+    background: linear-gradient(110deg, #111827 0%, #6b7280 22%, #ffffff 48%, #9ca3af 68%, #111827 100%);
     background-size: 200% auto; color: transparent;
     -webkit-background-clip: text; background-clip: text;
-    filter: drop-shadow(0px 1px 2px rgba(255,255,255,0.12));
+    -webkit-text-stroke: .2px rgba(255,255,255,.45);
+    filter: drop-shadow(0px 1px 2px rgba(255,255,255,0.28));
     animation: shineText 4s linear infinite;
+  }
+  @media(max-width:480px) {
+    .text-copyright-dongker { font-size: 9px; letter-spacing: .015em; }
   }
   .footer-badge {
     display: inline-flex;
@@ -581,6 +645,7 @@
     .footer-inner { justify-content: center; text-align: center; }
     .right-widget-container { right: 10px; }
     .widget-btn { width: 52px; height: 52px; }
+    .archive-item { align-items:flex-start; flex-direction:column; }
   }
 
   @media(max-width:480px){
@@ -599,10 +664,14 @@
 <!-- HEADER -->
 <header>
   <div class="logo">
-    <img src="image/logo-posbankum.jpg" alt="Logo POSBANKUM" class="logo-img" onerror="this.onerror=null;this.src='image/logo%20posbankum.jpg'"/>
+    <div class="logo-image-wrap">
+      <img id="siteLogo" src="image/logo-posbankum.jpg" alt="Logo POSBANKUM" class="logo-img" onerror="this.onerror=null;this.src='image/logo%20posbankum.jpg'"/>
+      <button type="button" class="logo-edit-button" onclick="bukaEditLogo()" aria-label="Edit logo POSBANKUM" title="Edit logo">✏️</button>
+      <input type="file" id="siteLogoQuickFile" accept="image/*" hidden />
+    </div>
     <div>
-      <h1>POSBANKUM DESA CIGENTUR</h1>
-      <p>Pos Bantuan Hukum - Pelayanan Hukum Gratis</p>
+      <h1 id="siteName">POSBANKUM DESA CIGENTUR</h1>
+      <p id="siteTagline">Pos Bantuan Hukum - Pelayanan Hukum Gratis</p>
     </div>
   </div>
   <nav>
@@ -624,14 +693,15 @@
 
 <!-- HERO -->
 <div class="hero" id="beranda">
+  <img id="heroBackground" class="hero-background" src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1600" alt="" />
   <div class="hero-inner">
     <div class="hero-copy">
       <div class="hero-badges">
         <span class="hero-badge">⚖️ Layanan Hukum Gratis</span>
         <span class="hero-badge">🤝 Pendampingan Masyarakat</span>
       </div>
-      <h2>SELAMAT DATANG DI POSBANKUM DESA CIGENTUR</h2>
-      <p>Melayani masyarakat dengan bantuan hukum gratis, konsultasi cepat, dan pendampingan yang profesional untuk mewujudkan keadilan yang mudah dijangkau.</p>
+      <h2 id="heroTitle">SELAMAT DATANG DI POSBANKUM DESA CIGENTUR</h2>
+      <p id="heroDescription">Melayani masyarakat dengan bantuan hukum gratis, konsultasi cepat, dan pendampingan yang profesional untuk mewujudkan keadilan yang mudah dijangkau.</p>
       <div class="cta-row">
         <a class="primary-btn" href="#pengaduan">📩 Ajukan Pengaduan</a>
         <a class="secondary-btn" href="#berita">📖 Lihat Berita</a>
@@ -684,6 +754,81 @@
 <!-- PANEL KHUSUS ADMIN KELOLA WIDGET SIDEBAR -->
 <section class="admin-only" style="padding-bottom: 0;">
   <div class="form-admin-box">
+    <h3>⚙️ Kelola Identitas & Gambar Website</h3>
+    <p class="admin-help">Unggah gambar dari galeri HP atau file di komputer. Perubahan tersimpan di browser/perangkat ini; gunakan cadangan untuk memindahkan data ke perangkat lain.</p>
+    <input type="text" id="siteNameInput" placeholder="Nama website" />
+    <input type="text" id="siteTaglineInput" placeholder="Keterangan di bawah nama" />
+    <input type="text" id="heroTitleInput" placeholder="Judul halaman utama" />
+    <textarea id="heroDescriptionInput" rows="3" placeholder="Keterangan halaman utama"></textarea>
+    <input type="text" id="contactAddressInput" placeholder="Alamat layanan" />
+    <input type="tel" id="contactPhoneInput" placeholder="Nomor WhatsApp" />
+    <input type="email" id="contactEmailInput" placeholder="Email layanan" />
+    <input type="text" id="contactHoursInput" placeholder="Jam layanan" />
+    <input type="url" id="mapEmbedInput" placeholder="URL sematan Google Maps" />
+    <label class="admin-file-label" for="siteLogoFile">Ganti logo:</label>
+    <input type="file" id="siteLogoFile" accept="image/*" />
+    <input type="text" id="siteLogoUrl" placeholder="Atau alamat URL logo" />
+    <img id="siteLogoPreview" class="admin-preview" alt="Pratinjau logo" />
+    <label class="admin-file-label" for="heroImageFile">Ganti gambar sampul:</label>
+    <input type="file" id="heroImageFile" accept="image/*" />
+    <input type="text" id="heroImageUrl" placeholder="Atau alamat URL gambar sampul" />
+    <img id="heroImagePreview" class="admin-preview" alt="Pratinjau gambar sampul" />
+    <hr style="margin:16px 0; border:0; border-top:1px solid #e5e7eb;" />
+    <h4 style="margin-bottom:8px;">🎨 Atur Tema & Latar Website</h4>
+    <label class="admin-file-label" for="themePresetInput">Tema warna:</label>
+    <select id="themePresetInput" onchange="pilihTemaTampilan()">
+      <option value="green">Hijau POSBANKUM</option>
+      <option value="blue">Biru</option>
+      <option value="purple">Ungu</option>
+      <option value="rose">Merah muda</option>
+      <option value="custom">Kustom</option>
+    </select>
+    <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:10px;">
+      <label>Warna utama <input type="color" id="themePrimaryInput" aria-label="Warna utama tema" onchange="tandaiTemaKustom()" /></label>
+      <label>Warna sekunder <input type="color" id="themeSecondaryInput" aria-label="Warna sekunder tema" onchange="tandaiTemaKustom()" /></label>
+      <label>Warna aksen <input type="color" id="themeAccentInput" aria-label="Warna aksen tema" onchange="tandaiTemaKustom()" /></label>
+      <label>Warna latar dasar <input type="color" id="pageBackgroundColorInput" aria-label="Warna dasar latar halaman" onchange="tandaiTemaKustom()" /></label>
+    </div>
+    <label class="admin-file-label" for="pageBackgroundFile">Gambar latar halaman (HP/komputer):</label>
+    <input type="file" id="pageBackgroundFile" accept="image/*" />
+    <input type="text" id="pageBackgroundUrl" placeholder="Atau masukkan URL gambar latar (https://...)" />
+    <img id="pageBackgroundPreview" class="admin-preview" alt="Pratinjau gambar latar" />
+    <label class="admin-file-label" for="pageBackgroundOpacityInput">Kekuatan tampilan gambar latar:</label>
+    <input type="range" id="pageBackgroundOpacityInput" min="0" max="60" step="5" />
+    <label class="admin-file-label" for="pageBackgroundAnimationInput">Animasi latar berjalan:</label>
+    <select id="pageBackgroundAnimationInput">
+      <option value="none">Tanpa animasi</option>
+      <option value="zoom">Zoom perlahan</option>
+      <option value="drift">Bergerak perlahan</option>
+    </select>
+    <p class="admin-help">Gunakan gambar latar sederhana dan atur kekuatannya agar teks tetap nyaman dibaca.</p>
+    <button type="button" onclick="simpanPengaturan()">💾 Simpan Pengaturan Website</button>
+    <hr style="margin:16px 0; border:0; border-top:1px solid #e5e7eb;" />
+    <strong>Cadangan konten & gambar</strong>
+    <p class="admin-help">Ekspor untuk mengunduh cadangan, lalu impor file cadangan di perangkat lain.</p>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+      <button type="button" onclick="eksporCadangan()">⬇️ Ekspor Cadangan</button>
+      <label for="importCadanganFile" class="btn-edit-widget" style="padding:8px 16px; cursor:pointer;">⬆️ Impor Cadangan</label>
+      <input type="file" id="importCadanganFile" accept=".json,application/json" style="display:none;" onchange="imporCadangan(event)" />
+    </div>
+  </div>
+</section>
+
+<section class="admin-only" id="arsipAdmin" style="padding-bottom:0;">
+  <div class="form-admin-box">
+    <h3>🗂️ Arsip Dokumen POSBANKUM</h3>
+    <p class="admin-help">Berkas disimpan di browser/perangkat ini. Untuk mengirim lewat email, unduh berkas lalu lampirkan secara manual pada draf email POSBANKUM.</p>
+    <label class="admin-file-label" for="archiveFile">Pilih berkas dari HP atau komputer (maks. 25 MB per berkas):</label>
+    <input type="file" id="archiveFile" />
+    <input type="text" id="archiveNote" placeholder="Keterangan arsip (opsional)" />
+    <button type="button" id="archiveSaveButton" onclick="simpanArsip()">💾 Simpan ke Arsip</button>
+    <div id="archiveStatus" class="admin-help" role="status" aria-live="polite"></div>
+    <div id="archiveList" class="archive-list"></div>
+  </div>
+</section>
+
+<section class="admin-only" style="padding-bottom: 0;">
+  <div class="form-admin-box">
     <h3>🔗 Kelola Link Widget Sidebar Kanan</h3>
     <p style="font-size:13px; color:#666; margin-bottom:10px;">Atur, tambah, atau hapus link tautan widget yang muncul di sebelah kanan layar.</p>
     
@@ -691,6 +836,8 @@
     <input type="text" id="widgetJudul" placeholder="Judul Widget (Contoh: Web Desa)" />
     <input type="text" id="widgetUrl" placeholder="URL Target Tautan (Contoh: https://cigentur.desa.id)" />
     <input type="text" id="widgetIcon" placeholder="URL Icon / Gambar Logo Widget" />
+    <label class="admin-file-label" for="widgetIconFile">Atau pilih ikon dari perangkat:</label>
+    <input type="file" id="widgetIconFile" accept="image/*" />
     <div style="display:flex; gap:10px; flex-wrap:wrap;">
       <button type="button" id="btnSimpanWidget" onclick="simpanWidget()">➕ Tambah Widget</button>
       <button type="button" id="btnBatalEditWidget" onclick="resetFormWidget()" style="background:#6b7280; display:none;">Batal Edit</button>
@@ -762,7 +909,7 @@
     <input type="text" id="inputJudul" placeholder="Judul Berita" />
     
     <label style="font-size:13px; color:#555; display:block; margin-bottom:4px;">Upload Gambar Berita (JPG/JPEG/PNG):</label>
-    <input type="file" id="inputGambarFile" accept=".jpg, .jpeg, .png" />
+    <input type="file" id="inputGambarFile" accept="image/*" />
     <input type="text" id="inputGambarUrl" placeholder="Atau masukkan URL Gambar" style="margin-top:5px;" />
     
     <textarea id="inputIsi" rows="3" placeholder="Isi Berita"></textarea>
@@ -781,13 +928,14 @@
   <p class="section-sub">Dokumentasi foto kegiatan POSBANKUM Desa Cigentur</p>
 
   <div class="form-admin-box admin-only">
-    <h3>🖼️ Tambah Foto Galeri</h3>
-    <label style="font-size:13px; color:#555; display:block; margin-bottom:4px;">Upload Foto Galeri (JPG/JPEG/PNG):</label>
-    <input type="file" id="galeriFile" accept=".jpg, .jpeg, .png" />
+    <h3 id="formGaleriTitle">🖼️ Tambah Foto Galeri</h3>
+    <label class="admin-file-label" for="galeriFile">Pilih foto dari perangkat:</label>
+    <input type="file" id="galeriFile" accept="image/*" />
     <input type="text" id="galeriUrl" placeholder="Atau masukkan URL Foto" style="margin-top:5px;" />
     
     <input type="text" id="galeriKet" placeholder="Keterangan Foto" />
-    <button type="button" onclick="tambahGaleri()">Unggah Foto</button>
+    <button type="button" id="btnSimpanGaleri" onclick="tambahGaleri()">Unggah Foto</button>
+    <button type="button" id="btnBatalEditGaleri" onclick="resetFormGaleri()" style="background:#6b7280; display:none;">Batal Edit</button>
   </div>
 
   <div class="gallery-slider">
@@ -807,7 +955,7 @@
     <input type="text" id="tambahNama" placeholder="Nama Lengkap & Gelar" />
     <input type="text" id="tambahJabatan" placeholder="Jabatan (Contoh: Paralegal / Ketua)" />
     <label style="font-size:13px; color:#555; display:block; margin-bottom:4px;">Upload Foto Format JPG/JPEG/PNG:</label>
-    <input type="file" id="tambahFotoFile" accept=".jpg, .jpeg, .png" />
+    <input type="file" id="tambahFotoFile" accept="image/*" />
     <input type="text" id="tambahFotoUrl" placeholder="Atau masukkan URL Foto" style="margin-top:5px;" />
     <div style="display:flex; gap:10px; flex-wrap:wrap;">
       <button type="button" id="btnSimpanPengurus" onclick="simpanPengurus()">➕ Tambah Pengurus</button>
@@ -871,10 +1019,10 @@
       <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3959.980649710373!2d107.794628!3d-7.011531!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68c17ecf45dd3f%3A0x868cb6788a87d09b!2sDesa%20Cigentur%2C%20Paseh%2C%20Bandung%2C%20West%20Java!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid" allowfullscreen="" loading="lazy"></iframe>
     </div>
     <div style="background:white; padding:25px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,.08);">
-      <p style="margin-bottom:10px;">📍 <strong>Alamat:</strong> Kantor Desa Cigentur, Jl. Cibuah No. 29 RT.001 RW.005, Kec. Paseh, Kab. Bandung 40383</p>
-      <p style="margin-bottom:10px;">📞 <strong>WhatsApp:</strong> 087734112044</p>
-      <p style="margin-bottom:10px;">📧 <strong>Email:</strong> posbankum.cigenturbdg@gmail.com</p>
-      <p>🕒 <strong>Layanan:</strong> Senin - Jumat (08.00 - 15.00 WIB)</p>
+      <p style="margin-bottom:10px;">📍 <strong>Alamat:</strong> <span id="contactAddress">Kantor Desa Cigentur, Jl. Cibuah No. 29 RT.001 RW.005, Kec. Paseh, Kab. Bandung 40383</span></p>
+      <p style="margin-bottom:10px;">📞 <strong>WhatsApp:</strong> <span id="contactPhone">087734112044</span></p>
+      <p style="margin-bottom:10px;">📧 <strong>Email:</strong> <span id="contactEmail">posbankum.cigenturbdg@gmail.com</span></p>
+      <p>🕒 <strong>Layanan:</strong> <span id="contactHours">Senin - Jumat (08.00 - 15.00 WIB)</span></p>
     </div>
   </div>
 </section>
@@ -882,7 +1030,7 @@
 <!-- FOOTER -->
 <footer>
   <div class="footer-inner">
-    <p class="text-copyright-dongker">© 2026 POSBANKUM DESA CIGENTUR. Webdesign@Nurdin Hiyatulloh el-ghifari All Rights Reserved</p>
+    <p class="text-copyright-dongker">© 2026posbankumdesacigentur|webdesign@Nurdin Hiyatulloh el-ghifari |All Rights Reserved</p>
   </div>
 </footer>
 
@@ -900,521 +1048,250 @@
 </div>
 
 <!-- WA FLOATING -->
-<a href="https://wa.me/6287734112044" target="_blank" class="wa-float" aria-label="WA Konsultasi">💬</a>
+<a id="waFloat" href="https://wa.me/6287734112044" target="_blank" class="wa-float" aria-label="WA Konsultasi">💬</a>
 
 <script>
   let isAdmin = false;
   let editIndex = null;
   let editWidgetIndex = null;
   let editPengurusIndex = null;
+  let editGaleriIndex = null;
+  let archiveDatabasePromise = null;
+  const defaultSettings = {
+    siteName: 'POSBANKUM DESA CIGENTUR',
+    siteTagline: 'Pos Bantuan Hukum - Pelayanan Hukum Gratis',
+    heroTitle: 'SELAMAT DATANG DI POSBANKUM DESA CIGENTUR',
+    heroDescription: 'Melayani masyarakat dengan bantuan hukum gratis, konsultasi cepat, dan pendampingan yang profesional untuk mewujudkan keadilan yang mudah dijangkau.',
+    address: 'Kantor Desa Cigentur, Jl. Cibuah No. 29 RT.001 RW.005, Kec. Paseh, Kab. Bandung 40383',
+    phone: '087734112044',
+    email: 'posbankum.cigenturbdg@gmail.com',
+    hours: 'Senin - Jumat (08.00 - 15.00 WIB)',
+    mapEmbed: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3959.980649710373!2d107.794628!3d-7.011531!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68c17ecf45dd3f%3A0x868cb6788a87d09b!2sDesa%20Cigentur%2C%20Paseh%2C%20Bandung%2C%20West%20Java!5e0!3m2!1sid!2sid!4v1700000000000!5m2!1sid!2sid',
+    logo: 'image/logo-posbankum.jpg',
+    heroImage: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1600',
+    themePreset: 'green',
+    themePrimary: '#0f766e',
+    themeSecondary: '#065f46',
+    themeAccent: '#f59e0b',
+    pageBackgroundColor: '#f9fafb',
+    pageBackgroundImage: '',
+    pageBackgroundOpacity: 20,
+    pageBackgroundAnimation: 'none'
+  };
+  const themePalettes = {
+    green: { themePrimary: '#0f766e', themeSecondary: '#065f46', themeAccent: '#f59e0b', pageBackgroundColor: '#f9fafb', headerStart: 'rgba(7, 89, 82, 0.97)', headerEnd: 'rgba(5, 67, 56, 0.96)', heroStart: 'rgba(15,118,110,.85)', heroEnd: 'rgba(6,95,70,.85)' },
+    blue: { themePrimary: '#2563eb', themeSecondary: '#1e3a8a', themeAccent: '#f59e0b', pageBackgroundColor: '#f8fafc', headerStart: 'rgba(30, 58, 138, 0.97)', headerEnd: 'rgba(30, 64, 175, 0.96)', heroStart: 'rgba(37,99,235,.85)', heroEnd: 'rgba(30,58,138,.88)' },
+    purple: { themePrimary: '#7c3aed', themeSecondary: '#5b21b6', themeAccent: '#fbbf24', pageBackgroundColor: '#faf5ff', headerStart: 'rgba(91, 33, 182, 0.97)', headerEnd: 'rgba(76, 29, 149, 0.96)', heroStart: 'rgba(124,58,237,.85)', heroEnd: 'rgba(91,33,182,.88)' },
+    rose: { themePrimary: '#e11d48', themeSecondary: '#9f1239', themeAccent: '#f59e0b', pageBackgroundColor: '#fff7f7', headerStart: 'rgba(159, 18, 57, 0.97)', headerEnd: 'rgba(136, 19, 55, 0.96)', heroStart: 'rgba(225,29,72,.85)', heroEnd: 'rgba(159,18,57,.88)' }
+  };
+  let settings = {
+    ...defaultSettings,
+    ...JSON.parse(localStorage.getItem('posbankum_settings') || '{}')
+  };
 
-  const widgetDefaults = [
-    { judul: "Web Desa Cigentur", url: "https://cigentur.desa.id", icon: "image/widget-desa.svg", target: "_blank" },
-    { judul: "JDIH Kabupaten Bandung", url: "https://jdih.bandungkab.go.id", icon: "image/widget-jdih.svg", target: "_blank" },
-    { judul: "Kementerian Hukum dan HAM", url: "https://kemenkumham.go.id", icon: "image/widget-kemenkumham.svg", target: "_blank" },
-    { judul: "Konsultasi", url: "#pengaduan", icon: "image/widget-konsultasi.svg", target: "_self" }
-  ];
-  const savedWidgets = JSON.parse(localStorage.getItem('posbankum_widgets'));
-  let widgets = Array.isArray(savedWidgets)
-    ? savedWidgets.map(widget => {
-        const preset = widgetDefaults.find(item => item.url === widget.url);
-        return preset ? { ...widget, ...preset } : widget;
-      })
-    : widgetDefaults;
-  localStorage.setItem('posbankum_widgets', JSON.stringify(widgets));
-
-  let berita = JSON.parse(localStorage.getItem('posbankum_berita')) || [
-    { judul: "Pembukaan Layanan POSBANKUM", gambar: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600", isi: "POSBANKUM Desa Cigentur resmi membuka layanan bantuan hukum gratis untuk masyarakat.", tanggal: "05 Oktober 2026" },
-    { judul: "Sosialisasi Hukum Pertanahan", gambar: "https://images.unsplash.com/photo-1529390079861-591de354faf5?w=600", isi: "Edukasi dan pendampingan terkait sengketa tanah dan pertanahan desa.", tanggal: "02 Oktober 2026" }
-  ];
-
-  let galeri = JSON.parse(localStorage.getItem('posbankum_galeri')) || [
-    { foto: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=1000", ket: "Peresmian dan Pelayanan Pos Bantuan Hukum" },
-    { foto: "https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1000", ket: "Konsultasi Hukum Gratis bagi Masyarakat Desa" }
-  ];
-
-  let pengurus = JSON.parse(localStorage.getItem('posbankum_pengurus')) || [
-    { nama: "LUTHFI PRAMA RIZKI, S.AP", jabatan: "Paralegal", foto: "https://i.pravatar.cc/150?img=12" },
-    { nama: "ENDUN HANHAN", jabatan: "Paralegal", foto: "https://i.pravatar.cc/150?img=33" },
-    { nama: "H. MOCH WAWAN SETIAWAN", jabatan: "Paralegal", foto: "https://i.pravatar.cc/150?img=15" }
-  ];
-
-  let slideIndex = 0;
-
-  /* RENDER WIDGET SIDEBAR */
-  function renderWidgets() {
-    const container = document.getElementById('widgetContainer');
-    const adminList = document.getElementById('widgetListAdmin');
-
-    container.innerHTML = widgets.map((w, i) => `
-      <div class="widget-item">
-        <a href="${w.url}" target="${w.target || '_blank'}" class="widget-btn" title="${w.judul}">
-          <img src="${w.icon}" alt="${w.judul}" onerror="this.src='https://via.placeholder.com/50?text=Link'"/>
-        </a>
-        <div class="widget-admin-btns">
-          <button type="button" class="btn-edit-widget" data-index="${i}" aria-label="Edit ${w.judul}">✏️</button>
-          <button type="button" class="btn-delete-item btn-del-widget" data-index="${i}" aria-label="Hapus ${w.judul}">🗑️</button>
-        </div>
-      </div>
-    `).join('');
-
-    if (adminList) {
-      adminList.innerHTML = widgets.map((w, i) => `
-        <div class="widget-list-item">
-          <div>
-            <strong>${w.judul}</strong> <br>
-            <small style="color:#6b7280;">${w.url}</small>
-          </div>
-          <div>
-            <button type="button" class="btn-edit-widget" data-index="${i}">✏️ Edit</button>
-            <button type="button" class="btn-delete-item btn-del-widget" data-index="${i}">Hapus</button>
-          </div>
-        </div>
-      `).join('');
+  function simpanJson(key, value, tampilkanPeringatan = true) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    } catch (error) {
+      console.error(`Gagal menyimpan ${key}:`, error);
+      if (tampilkanPeringatan) {
+        alert('Penyimpanan browser penuh atau tidak tersedia. Hapus beberapa gambar berukuran besar, lalu coba lagi.');
+      }
+      return false;
     }
   }
 
-  function simpanWidget() {
-    const judul = document.getElementById('widgetJudul').value.trim();
-    const url = document.getElementById('widgetUrl').value.trim();
-    const icon = document.getElementById('widgetIcon').value.trim() || 'https://via.placeholder.com/100?text=Link';
-
-    if (!judul || !url) {
-      alert('Judul dan URL Widget wajib diisi!');
-      return;
+  function bukaDatabaseArsip() {
+    if (!('indexedDB' in window)) {
+      return Promise.reject(new Error('Penyimpanan arsip tidak didukung oleh browser ini.'));
     }
-
-    const target = url.startsWith('#') ? '_self' : '_blank';
-    const widget = { judul, url, icon, target };
-    if (editWidgetIndex !== null) {
-      widgets[editWidgetIndex] = widget;
-    } else {
-      widgets.push(widget);
+    if (!archiveDatabasePromise) {
+      archiveDatabasePromise = new Promise((resolve, reject) => {
+        const request = indexedDB.open('posbankum_arsip', 1);
+        request.onupgradeneeded = () => {
+          const database = request.result;
+          if (!database.objectStoreNames.contains('dokumen')) {
+            database.createObjectStore('dokumen', { keyPath: 'id' });
+          }
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error || new Error('Database arsip gagal dibuka.'));
+        request.onblocked = () => reject(new Error('Database arsip sedang dipakai tab lain. Tutup tab POSBANKUM lain lalu coba lagi.'));
+      });
     }
-    const wasEditing = editWidgetIndex !== null;
-    localStorage.setItem('posbankum_widgets', JSON.stringify(widgets));
-    resetFormWidget();
-    renderWidgets();
-    alert(wasEditing ? '✅ Widget berhasil diperbarui!' : '✅ Widget berhasil ditambahkan!');
+    return archiveDatabasePromise;
   }
 
-  function mulaiEditWidget(i) {
-    const widget = widgets[i];
-    if (!widget) return;
-    editWidgetIndex = i;
-    document.getElementById('widgetJudul').value = widget.judul;
-    document.getElementById('widgetUrl').value = widget.url;
-    document.getElementById('widgetIcon').value = widget.icon;
-    document.getElementById('formWidgetTitle').textContent = `✏️ Edit Widget: ${widget.judul}`;
-    document.getElementById('btnSimpanWidget').textContent = '💾 Simpan Perubahan';
-    document.getElementById('btnBatalEditWidget').style.display = 'inline-block';
-    document.querySelector('#widgetListAdmin').closest('.form-admin-box').scrollIntoView({ behavior: 'smooth' });
+  function operasiArsip(mode, action) {
+    return bukaDatabaseArsip().then(database => new Promise((resolve, reject) => {
+      const transaction = database.transaction('dokumen', mode);
+      const request = action(transaction.objectStore('dokumen'));
+      let result;
+      request.onsuccess = () => { result = request.result; };
+      request.onerror = () => reject(request.error || new Error('Operasi arsip gagal.'));
+      transaction.oncomplete = () => resolve(result);
+      transaction.onerror = () => reject(transaction.error || new Error('Operasi arsip gagal.'));
+      transaction.onabort = () => reject(transaction.error || new Error('Penyimpanan arsip dibatalkan.'));
+    }));
   }
 
-  function resetFormWidget() {
-    editWidgetIndex = null;
-    document.getElementById('widgetJudul').value = '';
-    document.getElementById('widgetUrl').value = '';
-    document.getElementById('widgetIcon').value = '';
-    document.getElementById('formWidgetTitle').textContent = '➕ Tambah Widget Baru';
-    document.getElementById('btnSimpanWidget').textContent = '➕ Tambah Widget';
-    document.getElementById('btnBatalEditWidget').style.display = 'none';
+  function tampilkanStatusArsip(message, isError = false) {
+    const status = document.getElementById('archiveStatus');
+    status.textContent = message;
+    status.style.color = isError ? '#b91c1c' : '';
   }
 
-  function hapusWidget(i) {
-    if (!widgets[i]) return;
-    if (confirm(`Hapus widget "${widgets[i].judul}"?`)) {
-      widgets.splice(i, 1);
-      localStorage.setItem('posbankum_widgets', JSON.stringify(widgets));
-      if (editWidgetIndex === i) resetFormWidget();
-      renderWidgets();
-    }
-  }
-
-  /* BERITA FUNCTIONS */
-  function renderBerita() {
-    const grid = document.getElementById('beritaGrid');
-    grid.innerHTML = berita.map((b, i) => `
-      <div class="berita-card">
-        <div>
-          <div class="berita-img-wrapper">
-            <img src="${b.gambar}" alt="${b.judul}" onerror="this.src='https://via.placeholder.com/600x400?text=Gambar+Berita'"/>
-          </div>
-          <div class="berita-body">
-            <small style="color:var(--primary); font-weight:bold;">${b.tanggal}</small>
-            <h3 style="margin:5px 0;">${b.judul}</h3>
-            <p style="font-size:14px; color:#4b5563;">${b.isi}</p>
-          </div>
-        </div>
-        ${isAdmin ? `
-          <div style="padding: 10px 15px; background: #fff3cd; display: flex; gap: 8px; border-top: 1px solid #ffebaa;">
-            <button type="button" class="btn-edit-berita" data-index="${i}" style="background:#f59e0b; color:white; border:none; padding:6px 12px; border-radius:4px; font-size:12px; cursor:pointer;">✏️ Edit</button>
-            <button type="button" class="btn-delete btn-del-berita" data-index="${i}">🗑️ Hapus</button>
-          </div>
-        ` : ''}
-        <div class="share-container">
-          <span style="font-size:12px;">Bagikan:</span>
-          <div>
-            <a href="https://api.whatsapp.com/send?text=${encodeURIComponent(b.judul)}" target="_blank" class="btn-share" style="background:#25d366;">WA</a>
-            <a href="https://www.facebook.com/sharer/sharer.php" target="_blank" class="btn-share" style="background:#1877f2;">FB</a>
-          </div>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  function mulaiEditBerita(i) {
-    editIndex = i;
-    const b = berita[i];
-    
-    document.getElementById('inputJudul').value = b.judul;
-    document.getElementById('inputIsi').value = b.isi;
-    document.getElementById('inputGambarUrl').value = b.gambar.startsWith('data:') ? '' : b.gambar;
-    
-    document.getElementById('formBeritaTitle').textContent = `✏️ Edit Berita (Indeks #${i + 1})`;
-    const btnSimpan = document.getElementById('btnSimpanBerita');
-    btnSimpan.textContent = '💾 Perbarui Berita';
-    btnSimpan.style.background = '#f59e0b';
-    document.getElementById('btnBatalEditBerita').style.display = 'block';
-
-    document.querySelector('#berita .form-admin-box').scrollIntoView({ behavior: 'smooth' });
-  }
-
-  function resetFormBerita() {
-    editIndex = null;
-    document.getElementById('inputJudul').value = '';
-    document.getElementById('inputIsi').value = '';
-    document.getElementById('inputGambarUrl').value = '';
-    document.getElementById('inputGambarFile').value = '';
-    
-    document.getElementById('formBeritaTitle').textContent = '➕ Tambah Berita Baru';
-    const btnSimpan = document.getElementById('btnSimpanBerita');
-    btnSimpan.textContent = 'Simpan Berita';
-    btnSimpan.style.background = 'var(--primary)';
-    document.getElementById('btnBatalEditBerita').style.display = 'none';
-  }
-
-  function tambahBerita() {
-    const judul = document.getElementById('inputJudul').value.trim();
-    const isi = document.getElementById('inputIsi').value.trim();
-    const urlInput = document.getElementById('inputGambarUrl').value.trim();
-    const fileInput = document.getElementById('inputGambarFile').files[0];
-
-    if (!judul || !isi) {
-      alert('Judul dan isi berita wajib diisi!');
-      return;
-    }
-
-    const tanggal = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-
-    const simpanDataFinal = (gambarFinal) => {
-      if (editIndex !== null) {
-        berita[editIndex].judul = judul;
-        berita[editIndex].isi = isi;
-        if (gambarFinal) {
-          berita[editIndex].gambar = gambarFinal;
-        }
-        alert('✅ Berita berhasil diperbarui!');
-      } else {
-        const gambar = gambarFinal || 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600';
-        berita.unshift({ judul, gambar, isi, tanggal });
-        alert('✅ Berita baru berhasil ditambahkan!');
+  async function renderArsip() {
+    const list = document.getElementById('archiveList');
+    list.replaceChildren();
+    try {
+      const records = await operasiArsip('readonly', store => store.getAll());
+      records.sort((a, b) => b.createdAt - a.createdAt);
+      if (records.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'archive-empty';
+        empty.textContent = 'Belum ada berkas arsip.';
+        list.append(empty);
+        return;
       }
 
-      localStorage.setItem('posbankum_berita', JSON.stringify(berita));
-      resetFormBerita();
-      renderBerita();
-    };
+      records.forEach(record => {
+        const item = document.createElement('article');
+        item.className = 'archive-item';
+        const info = document.createElement('div');
+        info.className = 'archive-item-info';
+        const name = document.createElement('strong');
+        name.textContent = record.name;
+        const details = document.createElement('small');
+        const date = new Date(record.createdAt).toLocaleString('id-ID');
+        const size = record.size < 1024 * 1024
+          ? `${Math.max(1, Math.round(record.size / 1024))} KB`
+          : `${(record.size / (1024 * 1024)).toFixed(1)} MB`;
+        details.textContent = `${date} · ${size}${record.note ? ` · ${record.note}` : ''}`;
+        info.append(name, details);
 
-    if (fileInput) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        simpanDataFinal(e.target.result);
+        const actions = document.createElement('div');
+        actions.className = 'archive-item-actions';
+        [
+          { label: '⬇️ Unduh', action: 'download' },
+          { label: '📧 Email', action: 'email' },
+          { label: '🗑️ Hapus', action: 'delete', className: 'archive-delete' }
+        ].forEach(buttonData => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.textContent = buttonData.label;
+          button.dataset.archiveAction = buttonData.action;
+          button.dataset.archiveId = record.id;
+          if (buttonData.className) button.className = buttonData.className;
+          actions.append(button);
+        });
+        item.append(info, actions);
+        list.append(item);
+      });
+    } catch (error) {
+      console.error('Gagal memuat arsip:', error);
+      tampilkanStatusArsip(error.message, true);
+    }
+  }
+
+  async function simpanArsip() {
+    const input = document.getElementById('archiveFile');
+    const file = input.files[0];
+    if (!file) {
+      tampilkanStatusArsip('Pilih berkas terlebih dahulu.', true);
+      return;
+    }
+    if (file.size > 25 * 1024 * 1024) {
+      tampilkanStatusArsip('Ukuran berkas maksimal 25 MB.', true);
+      return;
+    }
+
+    const button = document.getElementById('archiveSaveButton');
+    button.disabled = true;
+    tampilkanStatusArsip('Menyimpan berkas ke arsip...');
+    try {
+      const record = {
+        id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        name: file.name,
+        type: file.type || 'application/octet-stream',
+        size: file.size,
+        note: document.getElementById('archiveNote').value.trim(),
+        createdAt: Date.now(),
+        blob: file.slice(0, file.size, file.type || 'application/octet-stream')
       };
-      reader.readAsDataURL(fileInput);
-    } else {
-      let gambarFinal = urlInput;
-      if (editIndex !== null && !urlInput) {
-        gambarFinal = berita[editIndex].gambar;
+      await operasiArsip('readwrite', store => store.add(record));
+      input.value = '';
+      document.getElementById('archiveNote').value = '';
+      tampilkanStatusArsip('✅ Berkas tersimpan di arsip browser ini.');
+      await renderArsip();
+    } catch (error) {
+      console.error('Gagal menyimpan berkas arsip:', error);
+      tampilkanStatusArsip(`Gagal menyimpan berkas: ${error.message}`, true);
+    } finally {
+      button.disabled = false;
+    }
+  }
+
+  async function unduhArsip(id) {
+    try {
+      const record = await operasiArsip('readonly', store => store.get(id));
+      if (!record) throw new Error('Berkas arsip tidak ditemukan.');
+      const url = URL.createObjectURL(record.blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = record.name;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (error) {
+      console.error('Gagal mengunduh arsip:', error);
+      tampilkanStatusArsip(`Gagal mengunduh berkas: ${error.message}`, true);
+    }
+  }
+
+  async function emailArsip(id) {
+    const link = document.createElement('a');
+    const subject = 'Arsip Dokumen POSBANKUM Desa Cigentur';
+    const body = 'Mohon lampirkan berkas arsip yang baru diunduh dari website POSBANKUM.\\n\\n';
+    link.href = `mailto:${encodeURIComponent(settings.email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    link.target = '_blank';
+    link.click();
+
+    await unduhArsip(id);
+    tampilkanStatusArsip('Draf email dibuka. Lampirkan berkas yang baru diunduh sebelum mengirim email.');
+  }
+
+  async function hapusArsip(id) {
+    if (!confirm('Hapus berkas ini dari arsip browser?')) return;
+    try {
+      await operasiArsip('readwrite', store => store.delete(id));
+      tampilkanStatusArsip('Berkas berhasil dihapus dari arsip.');
+      await renderArsip();
+    } catch (error) {
+      console.error('Gagal menghapus arsip:', error);
+      tampilkanStatusArsip(`Gagal menghapus berkas: ${error.message}`, true);
+    }
+  }
+
+  function bacaGambar(file) {
+    return new Promise((resolve, reject) => {
+      if (!file || !file.type.startsWith('image/')) {
+        reject(new Error('Pilih file gambar yang valid.'));
+        return;
       }
-      simpanDataFinal(gambarFinal);
-    }
-  }
-
-  function hapusBerita(i) {
-    if (confirm('Yakin ingin menghapus berita ini?')) {
-      berita.splice(i, 1);
-      localStorage.setItem('posbankum_berita', JSON.stringify(berita));
-      if (editIndex === i) {
-        resetFormBerita();
+      if (file.size > 12 * 1024 * 1024) {
+        reject(new Error('Ukuran gambar maksimal 12 MB.'));
+        return;
       }
-      renderBerita();
-    }
-  }
 
-  /* GALERI FUNCTIONS */
-  function renderGaleri() {
-    const container = document.getElementById('slideContainer');
-    container.innerHTML = galeri.map((g, i) => `
-      <div class="slide-item">
-        <img src="${g.foto}" alt="Galeri" onerror="this.src='https://via.placeholder.com/1000x500?text=Foto+Galeri'"/>
-        <div class="slide-caption">
-          <p>${g.ket}</p>
-          ${isAdmin ? `<button type="button" class="btn-delete btn-del-galeri" data-index="${i}">🗑️ Hapus Foto</button>` : ''}
-        </div>
-      </div>
-    `).join('');
-  }
-
-  function tambahGaleri() {
-    const ket = document.getElementById('galeriKet').value.trim();
-    const urlInput = document.getElementById('galeriUrl').value.trim();
-    const fileInput = document.getElementById('galeriFile').files[0];
-
-    if (!ket) {
-      alert('Keterangan foto wajib diisi!');
-      return;
-    }
-
-    if (fileInput) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        galeri.push({ foto: e.target.result, ket });
-        simpanDanResetGaleri();
-      };
-      reader.readAsDataURL(fileInput);
-    } else if (urlInput) {
-      galeri.push({ foto: urlInput, ket });
-      simpanDanResetGaleri();
-    } else {
-      alert('Sertakan foto (upload file JPG/JPEG/PNG atau masukkan URL foto)!');
-    }
-  }
-
-  function simpanDanResetGaleri() {
-    localStorage.setItem('posbankum_galeri', JSON.stringify(galeri));
-    document.getElementById('galeriKet').value = '';
-    document.getElementById('galeriUrl').value = '';
-    document.getElementById('galeriFile').value = '';
-    renderGaleri();
-    alert('✅ Foto berhasil ditambahkan ke galeri!');
-  }
-
-  function hapusGaleri(i) {
-    if (confirm('Yakin ingin menghapus foto ini?')) {
-      galeri.splice(i, 1);
-      localStorage.setItem('posbankum_galeri', JSON.stringify(galeri));
-      renderGaleri();
-    }
-  }
-
-  /* STRUKTUR FUNCTIONS */
-  function renderStruktur() {
-    const grid = document.getElementById('strukturGrid');
-    grid.innerHTML = pengurus.map((p, i) => `
-      <div class="pengurus-card">
-        <img src="${p.foto}" alt="${p.nama}" onerror="this.src='https://via.placeholder.com/150?text=Foto'"/>
-        <h4>${p.nama}</h4>
-        <p class="jabatan">${p.jabatan}</p>
-        ${isAdmin ? `
-          <div class="admin-actions">
-            <button type="button" class="btn-edit-pengurus" data-index="${i}">✏️ Edit</button>
-            <button type="button" class="btn-delete-item btn-del-pengurus" data-index="${i}">🗑️ Hapus</button>
-          </div>
-        ` : ''}
-      </div>
-    `).join('');
-  }
-
-  function simpanPengurus() {
-    const nama = document.getElementById('tambahNama').value.trim();
-    const jabatan = document.getElementById('tambahJabatan').value.trim();
-    const urlInput = document.getElementById('tambahFotoUrl').value.trim();
-    const fileInput = document.getElementById('tambahFotoFile').files[0];
-
-    if (!nama || !jabatan) {
-      alert('Nama dan Jabatan pengurus wajib diisi!');
-      return;
-    }
-
-    const simpanPengurusFinal = (fotoFinal) => {
-      const anggota = { nama, jabatan, foto: fotoFinal };
-      const wasEditing = editPengurusIndex !== null;
-      if (wasEditing) {
-        pengurus[editPengurusIndex] = anggota;
-      } else {
-        pengurus.push(anggota);
-      }
-      localStorage.setItem('posbankum_pengurus', JSON.stringify(pengurus));
-      resetFormPengurus();
-      renderStruktur();
-      alert(wasEditing ? '✅ Data pengurus berhasil diperbarui!' : '✅ Anggota pengurus berhasil ditambahkan!');
-    };
-
-    if (fileInput) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        if (typeof e.target.result === 'string') simpanPengurusFinal(e.target.result);
-      };
-      reader.readAsDataURL(fileInput);
-    } else {
-      const fotoFinal = urlInput || (editPengurusIndex !== null ? pengurus[editPengurusIndex].foto : 'https://i.pravatar.cc/150?img=50');
-      simpanPengurusFinal(fotoFinal);
-    }
-  }
-
-  function mulaiEditPengurus(i) {
-    const anggota = pengurus[i];
-    if (!anggota) return;
-    editPengurusIndex = i;
-    document.getElementById('tambahNama').value = anggota.nama;
-    document.getElementById('tambahJabatan').value = anggota.jabatan;
-    document.getElementById('tambahFotoUrl').value = anggota.foto.startsWith('data:') ? '' : anggota.foto;
-    document.getElementById('tambahFotoFile').value = '';
-    document.getElementById('formPengurusTitle').textContent = `✏️ Edit Pengurus: ${anggota.nama}`;
-    document.getElementById('btnSimpanPengurus').textContent = '💾 Simpan Perubahan';
-    document.getElementById('btnBatalEditPengurus').style.display = 'inline-block';
-    document.querySelector('#struktur .form-admin-box').scrollIntoView({ behavior: 'smooth' });
-  }
-
-  function resetFormPengurus() {
-    editPengurusIndex = null;
-    document.getElementById('tambahNama').value = '';
-    document.getElementById('tambahJabatan').value = '';
-    document.getElementById('tambahFotoUrl').value = '';
-    document.getElementById('tambahFotoFile').value = '';
-    document.getElementById('formPengurusTitle').textContent = '➕ Tambah Anggota Pengurus Baru';
-    document.getElementById('btnSimpanPengurus').textContent = '➕ Tambah Pengurus';
-    document.getElementById('btnBatalEditPengurus').style.display = 'none';
-  }
-
-  function hapusPengurus(i) {
-    const anggota = pengurus[i];
-    if (!anggota) return;
-    if (confirm(`Hapus data pengurus "${anggota.nama}"?`)) {
-      pengurus.splice(i, 1);
-      localStorage.setItem('posbankum_pengurus', JSON.stringify(pengurus));
-      if (editPengurusIndex === i) resetFormPengurus();
-      renderStruktur();
-    }
-  }
-
-  /* AUTH ADMIN */
-  function toggleLogin() {
-    if (isAdmin) {
-      if (confirm('Keluar dari mode admin?')) {
-        isAdmin = false;
-        resetFormBerita();
-        resetFormWidget();
-        resetFormPengurus();
-        document.body.classList.remove('admin-mode');
-        document.getElementById('btnLogin').textContent = '🔐 Admin';
-        renderWidgets();
-        renderBerita();
-        renderGaleri();
-        renderStruktur();
-      }
-    } else {
-      document.getElementById('modalLogin').classList.add('active');
-    }
-  }
-
-  function prosesLogin() {
-    const pw = document.getElementById('inputPassword').value;
-    if (pw === 'admin123') {
-      isAdmin = true;
-      document.body.classList.add('admin-mode');
-      document.getElementById('btnLogin').textContent = '🚪 Keluar Admin';
-      tutupModalLogin();
-      renderWidgets();
-      renderBerita();
-      renderGaleri();
-      renderStruktur();
-      alert('✅ Berhasil masuk sebagai Admin!');
-    } else {
-      alert('❌ Password salah! (Default: admin123)');
-    }
-  }
-
-  function tutupModalLogin() {
-    document.getElementById('modalLogin').classList.remove('active');
-    document.getElementById('inputPassword').value = '';
-  }
-
-  /* EVENT DELEGATION GLOBAL */
-  document.addEventListener('click', function(e) {
-    const button = e.target.closest('button');
-    if (!button) return;
-    const idx = Number(button.getAttribute('data-index'));
-    if (button.classList.contains('btn-del-berita')) {
-      hapusBerita(idx);
-    }
-    if (button.classList.contains('btn-edit-berita')) {
-      mulaiEditBerita(idx);
-    }
-    if (button.classList.contains('btn-edit-widget')) {
-      mulaiEditWidget(idx);
-    }
-    if (button.classList.contains('btn-del-widget')) {
-      hapusWidget(idx);
-    }
-    if (button.classList.contains('btn-edit-pengurus')) {
-      mulaiEditPengurus(idx);
-    }
-    if (button.classList.contains('btn-del-pengurus')) {
-      hapusPengurus(idx);
-    }
-    if (button.classList.contains('btn-del-galeri')) {
-      hapusGaleri(idx);
-    }
-  });
-
-  /* SLIDER & FORM WA */
-  function moveSlide(n) {
-    const slides = document.querySelectorAll('.slide-item');
-    if(slides.length === 0) return;
-    slideIndex = (slideIndex + n + slides.length) % slides.length;
-    document.getElementById('slideContainer').style.transform = `translateX(-${slideIndex * 100}%)`;
-  }
-
-  function kirimPengaduanWA(e) {
-    e.preventDefault();
-    const nama = document.getElementById('aduanNama').value;
-    const hp = document.getElementById('aduanHp').value;
-    const pesan = document.getElementById('aduanPesan').value;
-    const text = `*Pengaduan POSBANKUM Desa Cigentur*\nNama: ${nama}\nNo: ${hp}\nPesan: ${pesan}`;
-    window.open(`https://wa.me/6287734112044?text=${encodeURIComponent(text)}`, '_blank');
-  }
-
-  function updateStatistik() {
-    let today = new Date().toISOString().split('T')[0];
-    let statData = JSON.parse(localStorage.getItem('visitor_stats')) || {
-      lastDate: today, todayCount: 0, weekCount: 145, totalCount: 1240
-    };
-    if (statData.lastDate !== today) {
-      statData.lastDate = today;
-      statData.todayCount = 1;
-    } else {
-      statData.todayCount += 1;
-    }
-    statData.weekCount += 1;
-    statData.totalCount += 1;
-    localStorage.setItem('visitor_stats', JSON.stringify(statData));
-
-    document.getElementById('statHariIni').innerText = statData.todayCount;
-    document.getElementById('statMingguIni').innerText = statData.weekCount;
-    document.getElementById('statTotal').innerText = statData.totalCount;
-    document.getElementById('statOnline').innerText = Math.floor(Math.random() * 4) + 1;
-  }
-
-  /* INIT */
-  renderWidgets();
-  renderBerita();
-  renderGaleri();
-  renderStruktur();
-  updateStatistik();
-
-  setInterval(() => moveSlide(1), 5000);
-</script>
-</body>
-</html>
+      const image = new Image();
+      const objectUrl = URL.createObjectURL(file);
+      image.onload = () => {
+        URL.revokeObjectURL(objectUrl);
+        const maxSide = 1280;
+        const scale = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+        canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+        const context = canvas.getContext('2d');
+        
