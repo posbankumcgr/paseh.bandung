@@ -1630,9 +1630,9 @@
   ];
 
   let pengurus = JSON.parse(localStorage.getItem('posbankum_pengurus')) || [
-    { nama: "LUTHFI PRAMA RIZKI, S.AP", jabatan: "Paralegal", foto: "https://i.pravatar.cc/150?img=12" },
-    { nama: "ENDUN HANHAN", jabatan: "Paralegal", foto: "https://i.pravatar.cc/150?img=33" },
-    { nama: "H. MOCH WAWAN SETIAWAN", jabatan: "Paralegal", foto: "https://i.pravatar.cc/150?img=15" }
+    { nama: "LUTHFI PRAMA RIZKI, S.AP", jabatan: "Paralegal", foto: "https://lh3.googleusercontent.com/d/1aAW5WMSeXHggITrhydhtxGRomGCVmW2G" },
+    { nama: "ENDUN HANHAN", jabatan: "Paralegal", foto: "https://lh3.googleusercontent.com/d/1fkvLwachaJM2MF3XCfFNfU8NyaNNaaTw" },
+    { nama: "H. MOCH WAWAN SETIAWAN", jabatan: "Paralegal", foto: "https://lh3.googleusercontent.com/d/1zEGPWoS_8nSbEN9IUoAdIC3zDeW0geGa" }
   ];
 
   let slideIndex = 0;
@@ -2010,7 +2010,7 @@
       alert('URL foto pengurus harus menggunakan alamat gambar yang valid.');
       return;
     }
-    let fotoFinal = urlInput || (editPengurusIndex !== null ? pengurus[editPengurusIndex].foto : 'https://i.pravatar.cc/150?img=50');
+    let fotoFinal = urlInput || (editPengurusIndex !== null ? pengurus[editPengurusIndex].foto : 'https://lh3.googleusercontent.com/d/1aAW5WMSeXHggITrhydhtxGRomGCVmW2G?img=50');
     try {
       if (fileInput) fotoFinal = await bacaGambar(fileInput);
     } catch (error) {
