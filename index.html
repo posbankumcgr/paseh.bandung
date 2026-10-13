@@ -1620,7 +1620,7 @@
       })
     : widgetDefaults;
   let berita = JSON.parse(localStorage.getItem('posbankum_berita')) || [
-    { judul: "Pembukaan Layanan POSBANKUM", gambar: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600", isi: "POSBANKUM Desa Cigentur resmi membuka layanan bantuan hukum gratis untuk masyarakat.", tanggal: "05 Oktober 2026" },
+    {"judul":"Posbankum Desa Cigentur Resmi Buka Layanan Bantuan Hukum Gratis untuk Masyarakat","gambar":"https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600","isi":"CIGENTUR, PASEH – Pos Bantuan Hukum (Posbankum) Desa Cigentur kini hadir untuk memberikan kemudahan akses keadilan dan pelayanan hukum cuma-cuma (gratis) bagi seluruh warga Desa Cigentur, Kecamatan Paseh, Kabupaten Bandung. Program ini dibentuk sebagai pilar keadilan masyarakat guna mewujudkan warga yang sadar dan paham akan hak-hak hukum mereka. Melalui kehadiran para paralegal dan pengurus Posbankum Desa Cigentur, masyarakat yang menghadapi permasalahan hukum tidak perlu lagi merasa cemas atau bingung mencari tempat berkonsultasi. Adapun 4 layanan utama yang disediakan oleh Posbankum Desa Cigentur meliputi: Konsultasi Hukum Gratis: Memberikan ruang diskusi dan jalan keluar atas berbagai permasalahan hukum secara gratis bagi warga lokal. Pendampingan Hukum: Mendampingi masyarakat dalam proses penyelesaian perkara hukum. Penyuluhan Hukum: Mengadakan sosialisasi serta edukasi secara berkala guna meningkatkan kesadaran hukum di tingkat desa. Mediasi: Mengutamakan penyelesaian sengketa antarwarga secara kekeluargaan, damai, dan adil. Masyarakat yang membutuhkan konsultasi atau hendak mengajukan pengaduan dapat langsung mendatangi Sekretariat Posbankum di Kantor Desa Cigentur, Jl. Cibuah No. 29 RT 001 RW 005, Kecamatan Paseh, Kabupaten Bandung (Jam Layanan: Senin–Jumat, 08.00–15.00 WIB). Selain itu, layanan konsultasi online juga dapat diakses secara cepat melalui kontak WhatsApp resmi di 087734112044.","tanggal":"10 Oktober 2026"}, { judul: "Pembukaan Layanan POSBANKUM", gambar: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600", isi: "POSBANKUM Desa Cigentur resmi membuka layanan bantuan hukum gratis untuk masyarakat.", tanggal: "05 Oktober 2026" },
     { judul: "Sosialisasi Hukum Pertanahan", gambar: "https://images.unsplash.com/photo-1529390079861-591de354faf5?w=600", isi: "Edukasi dan pendampingan terkait sengketa tanah dan pertanahan desa.", tanggal: "02 Oktober 2026" }
   ];
 
@@ -1764,7 +1764,7 @@
           <div class="berita-body">
             <small style="color:var(--primary); font-weight:bold;">${b.tanggal}</small>
             <h3 style="margin:5px 0;">${b.judul}</h3>
-            <p style="font-size:14px; color:#4b5563;">${b.isi}</p>
+            <p style="font-size:14px; color:#4b5563;">${b.isi.length > 180 ? b.isi.slice(0, 180) + '…' : b.isi}</p>         ${b.isi.length > 180 ? '<details><summary style="cursor:pointer; color:var(--primary);">Baca selengkapnya</summary><p>' + b.isi + '</p></details>' : ''}
           </div>
         </div>
         ${isAdmin ? `
