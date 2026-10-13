@@ -1605,11 +1605,12 @@
     preview.src = url;
   }
 
+  function ikonWidgetCadangan(label, color) { const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="' + color + '"/><circle cx="32" cy="32" r="23" fill="white" fill-opacity=".16"/><text x="32" y="37" text-anchor="middle" font-family="Arial,sans-serif" font-size="' + (label.length > 5 ? 10 : 14) + '" font-weight="700" fill="white">' + label + '</text></svg>'; return 'data:image/svg+xml,' + encodeURIComponent(svg); }
   const widgetDefaults = [
-    { judul: "Web Desa Cigentur", url: "https://cigentur.desa.id", icon: "image/widget-desa.svg", target: "_blank" },
-    { judul: "JDIH Kabupaten Bandung", url: "https://jdih.bandungkab.go.id", icon: "image/widget-jdih.svg", target: "_blank" },
-    { judul: "Kementerian Hukum dan HAM", url: "https://kemenkumham.go.id", icon: "image/widget-kemenkumham.svg", target: "_blank" },
-    { judul: "Konsultasi", url: "#pengaduan", icon: "image/widget-konsultasi.svg", target: "_self" }
+    { judul: "Web Desa Cigentur", url: "https://cigentur.desa.id", icon: ikonWidgetCadangan("DESA", "#0f766e"), target: "_blank" },
+    { judul: "JDIH Kabupaten Bandung", url: "https://jdih.bandungkab.go.id", icon: ikonWidgetCadangan("JDIH", "#2563eb"), target: "_blank" },
+    { judul: "Kementerian Hukum dan HAM", url: "https://kemenkumham.go.id", icon: ikonWidgetCadangan("KUMHAM", "#7c3aed"), target: "_blank" },
+    { judul: "Konsultasi", url: "#pengaduan", icon: "data:image/svg+xml,%3Csvg xmlns=%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%23d97706/%3E%3Ctext x=%2232%22 y=%2237%22 text-anchor=%22middle%22 font-size=%2214%22 font-weight=%22700%22 fill=%22white%22%3E%3F%3C/text%3E%3C/svg%3E", target: "_self" }
   ];
   const savedWidgets = JSON.parse(localStorage.getItem('posbankum_widgets'));
   let widgets = Array.isArray(savedWidgets)
